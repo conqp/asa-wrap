@@ -49,7 +49,7 @@ impl Args {
         #[cfg(target_os = "linux")]
         command.arg(&self.wine).arg(&self.server_exe.clone());
 
-        command.arg(self.command_attributes(&game_user_settings));
+        command.arg(self.attributes(&game_user_settings));
 
         if !self.battleye {
             command.arg("-NoBattlEye");
@@ -62,29 +62,29 @@ impl Args {
         command
     }
 
-    fn command_attributes(&self, game_user_settings: &IniFile) -> String {
-        let mut command_attributes = Vec::new();
-        command_attributes.push(self.map.clone());
-        command_attributes.push(LISTEN_ARG.into());
-        command_attributes.push(format!("SessionName={}", self.session_name));
+    fn attributes(&self, game_user_settings: &IniFile) -> String {
+        let mut attributes = Vec::new();
+        attributes.push(self.map.clone());
+        attributes.push(LISTEN_ARG.into());
+        attributes.push(format!("SessionName={}", self.session_name));
 
         if let Some(server_password) = game_user_settings.server_password() {
-            command_attributes.push(format!("{SERVER_PASSWORD}={server_password}"));
+            attributes.push(format!("{SERVER_PASSWORD}={server_password}"));
         }
 
         if let Some(server_admin_password) = game_user_settings.server_admin_password() {
-            command_attributes.push(format!("{SERVER_ADMIN_PASSWORD}={server_admin_password}"));
+            attributes.push(format!("{SERVER_ADMIN_PASSWORD}={server_admin_password}"));
         }
 
-        command_attributes.push(format!("Port={}", self.port));
-        command_attributes.push(format!("QueryPort={}", self.query_port));
+        attributes.push(format!("Port={}", self.port));
+        attributes.push(format!("QueryPort={}", self.query_port));
 
         if let Some(max_players) = game_user_settings.max_players() {
-            command_attributes.push(format!("{MAX_PLAYERS}={max_players}"));
+            attributes.push(format!("{MAX_PLAYERS}={max_players}"));
         }
 
-        command_attributes.extend_from_slice(&self.attributes);
-        command_attributes.join("?")
+        attributes.extend_from_slice(&self.attributes);
+        attributes.join("?")
     }
 
     fn game_user_settings(&self) -> IniFile {
