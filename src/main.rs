@@ -72,7 +72,7 @@ impl Args {
         let game_user_settings = ini!(&self.game_user_settings);
         debug!("Settings: {game_user_settings:?}");
         let mods = game_user_settings.active_mods();
-        debug!("Mods: {game_user_settings:?}");
+        debug!("Mods: {mods:?}");
         mods
     }
 }
