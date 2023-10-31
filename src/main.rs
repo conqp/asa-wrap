@@ -78,6 +78,6 @@ fn main() {
     let args = &command_line[1..];
     Command::new(command)
         .args(args)
-        .output()
+        .spawn()
         .expect("Failed to run subprocess.");
 }
