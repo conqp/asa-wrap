@@ -1,6 +1,8 @@
 use asa_wrap::GameUserSettings;
 use clap::Parser;
+use env_logger::init;
 use ini::ini;
+use log::debug;
 use std::process::Command;
 
 const GAME_USER_SETTINGS: &str = "ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini";
@@ -67,11 +69,16 @@ impl Args {
     }
 
     fn mods(&self) -> Option<String> {
-        ini!(&self.game_user_settings).active_mods()
+        let game_user_settings = ini!(&self.game_user_settings);
+        debug!("Settings: {game_user_settings:?}");
+        let mods = game_user_settings.active_mods();
+        debug!("Mods: {game_user_settings:?}");
+        mods
     }
 }
 
 fn main() {
+    init();
     let args = Args::parse();
     let command_line = args.command_line();
     let command = command_line.get(0).expect("No executable specified.");
