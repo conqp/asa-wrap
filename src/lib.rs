@@ -15,12 +15,13 @@ pub trait GameUserSettings {
     }
 
     fn active_mods(&self) -> Option<String> {
-        self.get_server_setting(ACTIVE_MODS_KEY)
+        self.get_server_setting(&ACTIVE_MODS_KEY.to_ascii_lowercase())
     }
 }
 
 impl GameUserSettings for IniFile {
     fn get_server_settings(&self) -> Option<Section> {
-        self.get(SERVER_SETTINGS_SECTION).cloned()
+        self.get(&SERVER_SETTINGS_SECTION.to_ascii_lowercase())
+            .cloned()
     }
 }
