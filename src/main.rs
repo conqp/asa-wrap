@@ -1,8 +1,8 @@
-use asa_wrap::GameUserSettings;
+use asa_wrap::{GameUserSettings, IniFile, MAX_PLAYERS, SERVER_ADMIN_PASSWORD, SERVER_PASSWORD};
 use clap::Parser;
 use env_logger::init;
 use ini::ini;
-use log::{debug, trace};
+use log::trace;
 use std::process::{exit, Command};
 
 const GAME_USER_SETTINGS: &str = "ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini";
@@ -26,6 +26,10 @@ struct Args {
     map: String,
     #[arg(short, long, help = "Use BattlEye", default_value_t = false)]
     battleye: bool,
+    #[arg(short, long, help = "Server port", default_value_t = 7777)]
+    port: u16,
+    #[arg(short, long, help = "Query port", default_value_t = 27015)]
+    query_port: u16,
     #[arg(short, long, help = "Additional attributes, separated by '?'")]
     attributes: Vec<String>,
     #[arg(short, long, help = "Additional arguments")]
@@ -36,6 +40,8 @@ struct Args {
 
 impl Args {
     pub fn command(&self) -> Command {
+        let game_user_settings = self.game_user_settings();
+        trace!("Settings: {game_user_settings:?}");
         #[cfg(target_os = "windows")]
         let mut command = Command::new(&self.server_exe);
         #[cfg(target_os = "linux")]
@@ -43,34 +49,46 @@ impl Args {
         #[cfg(target_os = "linux")]
         command.arg(&self.wine).arg(&self.server_exe.clone());
 
-        command.arg(self.command_attributes());
+        command.arg(self.command_attributes(&game_user_settings));
 
         if !self.battleye {
             command.arg("-NoBattlEye");
         }
 
-        if let Some(mods) = self.mods() {
+        if let Some(mods) = game_user_settings.active_mods() {
             command.arg(format!(r#"-mods="{mods}""#));
         }
 
         command
     }
 
-    fn command_attributes(&self) -> String {
+    fn command_attributes(&self, game_user_settings: &IniFile) -> String {
         let mut command_attributes = Vec::new();
         command_attributes.push(self.map.clone());
         command_attributes.push(LISTEN_ARG.into());
         command_attributes.push(format!("SessionName={}", self.session_name));
+
+        if let Some(server_password) = game_user_settings.server_password() {
+            command_attributes.push(format!("{SERVER_PASSWORD}={server_password}"));
+        }
+
+        if let Some(server_admin_password) = game_user_settings.server_admin_password() {
+            command_attributes.push(format!("{SERVER_ADMIN_PASSWORD}={server_admin_password}"));
+        }
+
+        command_attributes.push(format!("Port={}", self.port));
+        command_attributes.push(format!("QueryPort={}", self.query_port));
+
+        if let Some(max_players) = game_user_settings.max_players() {
+            command_attributes.push(format!("{MAX_PLAYERS}={max_players}"));
+        }
+
         command_attributes.extend_from_slice(&self.attributes);
         command_attributes.join("?")
     }
 
-    fn mods(&self) -> Option<String> {
-        let game_user_settings = ini!(&self.game_user_settings);
-        trace!("Settings: {game_user_settings:?}");
-        let mods = game_user_settings.active_mods();
-        debug!("Mods: {mods:?}");
-        mods
+    fn game_user_settings(&self) -> IniFile {
+        ini!(&self.game_user_settings)
     }
 }
 

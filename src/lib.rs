@@ -2,9 +2,12 @@ use std::collections::HashMap;
 
 const SERVER_SETTINGS_SECTION: &str = "ServerSettings";
 const ACTIVE_MODS_KEY: &str = "ActiveMods";
+pub const MAX_PLAYERS: &str = "MaxPlayers";
+pub const SERVER_PASSWORD: &str = "ServerPassword";
+pub const SERVER_ADMIN_PASSWORD: &str = "ServerAdminPassword";
 
-type Section = HashMap<String, Option<String>>;
-type IniFile = HashMap<String, Section>;
+pub type Section = HashMap<String, Option<String>>;
+pub type IniFile = HashMap<String, Section>;
 
 pub trait GameUserSettings {
     fn get_server_settings(&self) -> Option<Section>;
@@ -16,6 +19,18 @@ pub trait GameUserSettings {
 
     fn active_mods(&self) -> Option<String> {
         self.get_server_setting(&ACTIVE_MODS_KEY.to_ascii_lowercase())
+    }
+
+    fn server_password(&self) -> Option<String> {
+        self.get_server_setting(&SERVER_PASSWORD.to_ascii_lowercase())
+    }
+
+    fn server_admin_password(&self) -> Option<String> {
+        self.get_server_setting(&SERVER_ADMIN_PASSWORD.to_ascii_lowercase())
+    }
+
+    fn max_players(&self) -> Option<String> {
+        self.get_server_setting(&MAX_PLAYERS.to_ascii_lowercase())
     }
 }
 
