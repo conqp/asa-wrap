@@ -99,7 +99,7 @@ fn main() {
         .spawn()
         .expect("Failed to run subprocess.")
         .wait()
-        .expect("Subprocess terminated unexpectedly")
+        .expect("Subprocess terminated unexpectedly.")
         .code()
     {
         exit(exit_code)
