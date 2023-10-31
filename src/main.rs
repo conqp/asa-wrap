@@ -35,28 +35,25 @@ struct Args {
 }
 
 impl Args {
-    pub fn command_line(&self) -> Vec<String> {
-        let mut command_line = Vec::new();
+    pub fn command(&self) -> Command {
+        #[cfg(target_os = "windows")]
+        let mut command = Command::new(&self.server_exe);
         #[cfg(target_os = "linux")]
-        command_line.extend_from_slice(&[self.xvfb_run.clone(), self.wine.clone()]);
-        command_line.push(self.server_exe.clone());
-        command_line.extend_from_slice(&self.command_args());
-        command_line
-    }
+        let mut command = Command::new(&self.xvfb_run);
+        #[cfg(target_os = "linux")]
+        command.arg(&self.wine).arg(&self.server_exe.clone());
 
-    fn command_args(&self) -> Vec<String> {
-        let mut command_args = Vec::new();
-        command_args.push(self.command_attributes());
+        command.arg(self.command_attributes());
 
         if !self.battleye {
-            command_args.push("-NoBattlEye".into());
+            command.arg("-NoBattlEye");
         }
 
         if let Some(mods) = self.mods() {
-            command_args.push(format!(r#"-mods="{mods}""#));
+            command.arg(format!(r#"-mods="{mods}""#));
         }
 
-        command_args
+        command
     }
 
     fn command_attributes(&self) -> String {
@@ -79,12 +76,8 @@ impl Args {
 
 fn main() {
     init();
-    let args = Args::parse();
-    let command_line = args.command_line();
-    let command = command_line.get(0).expect("No executable specified.");
-    let args = &command_line[1..];
-    if let Some(exit_code) = Command::new(command)
-        .args(args)
+    if let Some(exit_code) = Args::parse()
+        .command()
         .spawn()
         .expect("Failed to run subprocess.")
         .wait()
