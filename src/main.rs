@@ -53,7 +53,7 @@ impl Args {
         }
 
         if let Some(mods) = self.mods() {
-            command_args.push(format!("-mods={mods}"));
+            command_args.push(format!(r#"-mods="{mods}""#));
         }
 
         command_args
