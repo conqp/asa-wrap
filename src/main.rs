@@ -3,7 +3,7 @@ use clap::Parser;
 use env_logger::init;
 use ini::ini;
 use log::debug;
-use std::process::Command;
+use std::process::{exit, Command};
 
 const GAME_USER_SETTINGS: &str = "ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini";
 const XVFB_RUN: &str = "/usr/bin/xvfb-run";
@@ -83,8 +83,14 @@ fn main() {
     let command_line = args.command_line();
     let command = command_line.get(0).expect("No executable specified.");
     let args = &command_line[1..];
-    Command::new(command)
+    if let Some(exit_code) = Command::new(command)
         .args(args)
         .spawn()
-        .expect("Failed to run subprocess.");
+        .expect("Failed to run subprocess.")
+        .wait()
+        .expect("Subprocess terminated unexpectedly")
+        .code()
+    {
+        exit(exit_code)
+    }
 }
