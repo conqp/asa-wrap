@@ -56,7 +56,7 @@ impl Args {
         }
 
         if let Some(mods) = game_user_settings.active_mods() {
-            command.arg(format!(r#"-mods="{mods}""#));
+            command.arg(format!(r"-mods={mods}"));
         }
 
         command
