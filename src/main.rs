@@ -2,7 +2,7 @@ use asa_wrap::{GameUserSettings, IniFile, MAX_PLAYERS, SERVER_ADMIN_PASSWORD, SE
 use clap::Parser;
 use env_logger::init;
 use ini::ini;
-use log::trace;
+use log::{error, trace};
 use std::process::{exit, Command};
 
 const GAME_USER_SETTINGS: &str = "ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini";
@@ -102,10 +102,16 @@ fn main() {
         Args::parse()
             .command()
             .spawn()
-            .expect("Failed to run subprocess.")
+            .unwrap_or_else(|error| {
+                error!("{error}");
+                exit(3);
+            })
             .wait()
-            .expect("Subprocess terminated unexpectedly.")
+            .unwrap_or_else(|error| {
+                error!("{error}");
+                exit(4);
+            })
             .code()
-            .unwrap_or(i32::MAX),
+            .unwrap_or(255),
     )
 }
