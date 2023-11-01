@@ -98,14 +98,14 @@ impl Args {
 
 fn main() {
     init();
-    if let Some(exit_code) = Args::parse()
-        .command()
-        .spawn()
-        .expect("Failed to run subprocess.")
-        .wait()
-        .expect("Subprocess terminated unexpectedly.")
-        .code()
-    {
-        exit(exit_code)
-    }
+    exit(
+        Args::parse()
+            .command()
+            .spawn()
+            .expect("Failed to run subprocess.")
+            .wait()
+            .expect("Subprocess terminated unexpectedly.")
+            .code()
+            .unwrap_or(i32::MAX),
+    )
 }
