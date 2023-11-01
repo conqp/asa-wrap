@@ -1,5 +1,9 @@
 # asa-wrap
-ARK Survival Ascended wrapper
+ARK Survival Ascended dedicated server wrapper.
+
+## Purpose
+This program starts an ARK Survival Ascended dedicated server 
+with parameters read from the `GameUserSettings.ini`.
 
 ## Installation
 You need to have a [Rust toolchain](https://rust-lang.org/) installed.
