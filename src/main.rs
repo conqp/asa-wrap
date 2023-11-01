@@ -72,10 +72,6 @@ impl Args {
             attributes.push(format!("{SERVER_PASSWORD}={server_password}"));
         }
 
-        if let Some(server_admin_password) = game_user_settings.server_admin_password() {
-            attributes.push(format!("{SERVER_ADMIN_PASSWORD}={server_admin_password}"));
-        }
-
         attributes.push(format!("Port={}", self.port));
         attributes.push(format!("QueryPort={}", self.query_port));
 
@@ -84,6 +80,11 @@ impl Args {
         }
 
         attributes.extend_from_slice(&self.attributes);
+
+        if let Some(server_admin_password) = game_user_settings.server_admin_password() {
+            attributes.push(format!("{SERVER_ADMIN_PASSWORD}={server_admin_password}"));
+        }
+
         attributes.join("?")
     }
 
