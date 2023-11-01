@@ -38,7 +38,7 @@ pub trait GameUserSettings {
     }
 
     fn max_players(&self) -> Option<String> {
-        self.server_setting(&MAX_PLAYERS.to_ascii_lowercase())
+        self.script_engine_game_session(&MAX_PLAYERS.to_ascii_lowercase())
     }
 }
 
