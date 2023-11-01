@@ -30,7 +30,11 @@ struct Args {
     port: u16,
     #[arg(short, long, help = "Query port", default_value_t = 27015)]
     query_port: u16,
-    #[arg(short, long, help = "Additional attributes, separated by '?'")]
+    #[arg(
+        short = 't',
+        long,
+        help = "Additional attributes (those separated by '?')"
+    )]
     attributes: Vec<String>,
     #[arg(short, long, help = "Additional arguments")]
     args: Vec<String>,
