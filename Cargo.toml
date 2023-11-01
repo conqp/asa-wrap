@@ -1,5 +1,11 @@
 [package]
 name = "asa-wrap"
+description = "Dedicated server wrapper for ARK: Survival Ascended"
+license = "MIT"
+authors = ["Richard Neumann <mail@richard-neumann.de>"]
+repository = "https://github.com/conqp/asa-wrap"
+keywords = ["ARK", "server", "wrapper"]
+categories = ["command-line-utilities"]
 version = "0.1.0"
 edition = "2021"
 
