@@ -30,7 +30,11 @@ struct Args {
     port: u16,
     #[arg(short, long, help = "Query port", default_value_t = 27015)]
     query_port: u16,
-    #[arg(short, long, help = "Additional attributes, separated by '?'")]
+    #[arg(
+        short = 't',
+        long,
+        help = "Additional attributes (those separated by '?')"
+    )]
     attributes: Vec<String>,
     #[arg(short, long, help = "Additional arguments")]
     args: Vec<String>,
@@ -40,14 +44,17 @@ struct Args {
 
 impl Args {
     pub fn command(&self) -> Command {
-        let game_user_settings = self.game_user_settings();
+        let game_user_settings = ini!(&self.game_user_settings);
         trace!("Settings: {game_user_settings:?}");
+
         #[cfg(target_os = "windows")]
         let mut command = Command::new(&self.server_exe);
         #[cfg(target_os = "linux")]
-        let mut command = Command::new(&self.xvfb_run);
-        #[cfg(target_os = "linux")]
-        command.arg(&self.wine).arg(&self.server_exe.clone());
+        let mut command = {
+            let mut command = Command::new(&self.xvfb_run);
+            command.arg(&self.wine).arg(&self.server_exe.clone());
+            command
+        };
 
         command.arg(self.attributes(&game_user_settings));
 
@@ -86,10 +93,6 @@ impl Args {
         }
 
         attributes.join("?")
-    }
-
-    fn game_user_settings(&self) -> IniFile {
-        ini!(&self.game_user_settings)
     }
 }
 
