@@ -11,6 +11,8 @@ const WINE: &str = "/usr/bin/wine";
 const SERVER_EXE: &str = "ShooterGame/Binaries/Win64/ArkAscendedServer.exe";
 const DEFAULT_MAP: &str = "TheIsland_WP";
 const LISTEN_ARG: &str = "listen";
+const DEFAULT_SERVER_PORT: u16 = 7777;
+const DEFAULT_QUERY_PORT: u16 = 27015;
 
 #[derive(Debug, Parser)]
 struct Args {
@@ -26,9 +28,9 @@ struct Args {
     map: String,
     #[arg(short, long, help = "Use BattlEye", default_value_t = false)]
     battleye: bool,
-    #[arg(short, long, help = "Server port", default_value_t = 7777)]
+    #[arg(short, long, help = "Server port", default_value_t = DEFAULT_SERVER_PORT)]
     port: u16,
-    #[arg(short, long, help = "Query port", default_value_t = 27015)]
+    #[arg(short, long, help = "Query port", default_value_t = DEFAULT_QUERY_PORT)]
     query_port: u16,
     #[arg(
         short = 't',
