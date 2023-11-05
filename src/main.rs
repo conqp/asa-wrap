@@ -52,7 +52,7 @@ impl Args {
         #[cfg(target_os = "linux")]
         let mut command = {
             let mut command = Command::new(&self.xvfb_run);
-            command.arg(&self.wine).arg(&self.server_exe.clone());
+            command.arg(&self.wine).arg(&self.server_exe);
             command
         };
 
