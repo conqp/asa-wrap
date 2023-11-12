@@ -33,7 +33,7 @@ struct Args {
     #[arg(short, long, help = "Query port", default_value_t = DEFAULT_QUERY_PORT)]
     query_port: u16,
     #[arg(short, long, help = "Max players")]
-    max_players: Option<u16>,
+    max_players: Option<u8>,
     #[arg(
         short = 't',
         long,
