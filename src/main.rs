@@ -9,7 +9,7 @@ const GAME_USER_SETTINGS: &str = "ShooterGame/Saved/Config/WindowsServer/GameUse
 const XVFB_RUN: &str = "/usr/bin/xvfb-run";
 const WINE: &str = "/usr/bin/wine";
 const SERVER_EXE: &str = "ShooterGame/Binaries/Win64/ArkAscendedServer.exe";
-const DEFAULT_MAP: &str = "TheIsland_WP";
+const DEFAULT_ARK: &str = "TheIsland_WP";
 const LISTEN_ARG: &str = "listen";
 const DEFAULT_SERVER_PORT: u16 = 7777;
 const DEFAULT_QUERY_PORT: u16 = 27015;
@@ -24,21 +24,23 @@ struct Args {
     wine: String,
     #[arg(short, long, help = "Path to the server's exe", default_value = SERVER_EXE)]
     server_exe: String,
-    #[arg(short, long, help = "Name of the map", default_value = DEFAULT_MAP)]
-    map: String,
+    #[arg(short, long, help = "Name of the ark", default_value = DEFAULT_ARK)]
+    ark: String,
     #[arg(short, long, help = "Use BattlEye", default_value_t = false)]
     battleye: bool,
     #[arg(short, long, help = "Server port", default_value_t = DEFAULT_SERVER_PORT)]
     port: u16,
     #[arg(short, long, help = "Query port", default_value_t = DEFAULT_QUERY_PORT)]
     query_port: u16,
+    #[arg(short, long, help = "Max players")]
+    max_players: Option<u16>,
     #[arg(
         short = 't',
         long,
         help = "Additional attributes (those separated by '?')"
     )]
     attributes: Vec<String>,
-    #[arg(short, long, help = "Additional arguments")]
+    #[arg(long, help = "Additional arguments")]
     args: Vec<String>,
     #[arg(index = 1, help = "The server name")]
     session_name: String,
@@ -73,7 +75,7 @@ impl Args {
 
     fn attributes(&self, game_user_settings: &IniFile) -> String {
         let mut attributes = Vec::new();
-        attributes.push(self.map.clone());
+        attributes.push(self.ark.clone());
         attributes.push(LISTEN_ARG.into());
         attributes.push(format!("SessionName={}", self.session_name));
 
@@ -84,7 +86,9 @@ impl Args {
         attributes.push(format!("Port={}", self.port));
         attributes.push(format!("QueryPort={}", self.query_port));
 
-        if let Some(max_players) = game_user_settings.max_players() {
+        if let Some(max_players) = self.max_players {
+            attributes.push(format!("{MAX_PLAYERS}={max_players}"));
+        } else if let Some(max_players) = game_user_settings.max_players() {
             attributes.push(format!("{MAX_PLAYERS}={max_players}"));
         }
 
