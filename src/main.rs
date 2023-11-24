@@ -1,4 +1,4 @@
-use asa_wrap::{GameUserSettings, IniFile, MAX_PLAYERS, SERVER_ADMIN_PASSWORD, SERVER_PASSWORD};
+use asa_wrap::{GameUserSettings, IniFile, SERVER_ADMIN_PASSWORD, SERVER_PASSWORD};
 use clap::Parser;
 use env_logger::init;
 use ini::ini;
@@ -66,6 +66,14 @@ impl Args {
             command.arg("-NoBattlEye");
         }
 
+        // when specified, this will overwrite MaxPlayers in the GUS
+        // if it is neither specified on command line nor set in the GUS it is set to 70
+        if let Some(max_players) = self.max_players {
+            command.arg(format!(r"-WinLiveMaxPlayers={max_players}"));
+        } else if let Some(max_players) = game_user_settings.max_players() {
+            command.arg(format!(r"-WinLiveMaxPlayers={max_players}"));
+        }
+
         if let Some(mods) = game_user_settings.active_mods() {
             command.arg(format!(r"-mods={mods}"));
         }
@@ -85,12 +93,6 @@ impl Args {
 
         attributes.push(format!("Port={}", self.port));
         attributes.push(format!("QueryPort={}", self.query_port));
-
-        if let Some(max_players) = self.max_players {
-            attributes.push(format!("{MAX_PLAYERS}={max_players}"));
-        } else if let Some(max_players) = game_user_settings.max_players() {
-            attributes.push(format!("{MAX_PLAYERS}={max_players}"));
-        }
 
         attributes.extend_from_slice(&self.attributes);
 
