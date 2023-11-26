@@ -67,13 +67,13 @@ impl Args {
         }
 
         if let Some(max_players) = self.max_players {
-            command.arg(format!(r"-WinLiveMaxPlayers={max_players}"));
+            command.arg(format!("-WinLiveMaxPlayers={max_players}"));
         } else if let Some(max_players) = game_user_settings.max_players() {
-            command.arg(format!(r"-WinLiveMaxPlayers={max_players}"));
+            command.arg(format!("-WinLiveMaxPlayers={max_players}"));
         }
 
         if let Some(mods) = game_user_settings.active_mods() {
-            command.arg(format!(r"-mods={mods}"));
+            command.arg(format!("-mods={mods}"));
         }
 
         command
