@@ -3,7 +3,7 @@ use std::collections::HashMap;
 const SERVER_SETTINGS_SECTION: &str = "ServerSettings";
 const SCRIPT_ENGINE_GAME_SESSION_SECTION: &str = "/Script/Engine.GameSession";
 const ACTIVE_MODS_KEY: &str = "ActiveMods";
-pub const MAX_PLAYERS: &str = "MaxPlayers";
+const MAX_PLAYERS: &str = "MaxPlayers";
 pub const SERVER_PASSWORD: &str = "ServerPassword";
 pub const SERVER_ADMIN_PASSWORD: &str = "ServerAdminPassword";
 
