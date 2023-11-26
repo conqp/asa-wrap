@@ -66,8 +66,6 @@ impl Args {
             command.arg("-NoBattlEye");
         }
 
-        // when specified, this will overwrite MaxPlayers in the GUS
-        // if it is neither specified on command line nor set in the GUS it is set to 70
         if let Some(max_players) = self.max_players {
             command.arg(format!(r"-WinLiveMaxPlayers={max_players}"));
         } else if let Some(max_players) = game_user_settings.max_players() {
