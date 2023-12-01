@@ -91,7 +91,6 @@ impl Args {
 
         attributes.push(format!("Port={}", self.port));
         attributes.push(format!("QueryPort={}", self.query_port));
-
         attributes.extend_from_slice(&self.attributes);
 
         if let Some(server_admin_password) = game_user_settings.server_admin_password() {
