@@ -1,4 +1,7 @@
-use asa_wrap::{GameUserSettings, IniFile, SERVER_ADMIN_PASSWORD, SERVER_PASSWORD};
+use asa_wrap::{
+    GameUserSettings, IniFile, ScriptEngineGameSession, ServerSettings, SERVER_ADMIN_PASSWORD,
+    SERVER_PASSWORD,
+};
 use clap::Parser;
 use env_logger::init;
 use ini::ini;
@@ -69,11 +72,17 @@ impl Args {
 
         if let Some(max_players) = self.max_players {
             command.arg(format!("-WinLiveMaxPlayers={max_players}"));
-        } else if let Some(max_players) = game_user_settings.max_players() {
+        } else if let Some(max_players) = game_user_settings
+            .script_engine_game_session()
+            .and_then(ScriptEngineGameSession::max_players)
+        {
             command.arg(format!("-WinLiveMaxPlayers={max_players}"));
         }
 
-        if let Some(mods) = game_user_settings.active_mods() {
+        if let Some(mods) = game_user_settings
+            .server_settings()
+            .and_then(ServerSettings::active_mods)
+        {
             command.arg(format!("-mods={mods}"));
         }
 
@@ -86,7 +95,10 @@ impl Args {
         attributes.push(LISTEN_ARG.into());
         attributes.push(format!("SessionName={}", self.session_name));
 
-        if let Some(server_password) = game_user_settings.server_password() {
+        if let Some(server_password) = game_user_settings
+            .server_settings()
+            .and_then(ServerSettings::server_password)
+        {
             attributes.push(format!("{SERVER_PASSWORD}={server_password}"));
         }
 
@@ -94,7 +106,10 @@ impl Args {
         attributes.push(format!("QueryPort={}", self.query_port));
         attributes.extend_from_slice(&self.attributes);
 
-        if let Some(server_admin_password) = game_user_settings.server_admin_password() {
+        if let Some(server_admin_password) = game_user_settings
+            .server_settings()
+            .and_then(ServerSettings::server_admin_password)
+        {
             attributes.push(format!("{SERVER_ADMIN_PASSWORD}={server_admin_password}"));
         }
 
