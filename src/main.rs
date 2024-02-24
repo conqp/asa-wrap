@@ -40,6 +40,7 @@ struct Args {
         help = "Additional attributes (those separated by '?')"
     )]
     attributes: Vec<String>,
+    #[allow(clippy::struct_field_names)]
     #[arg(long, help = "Additional arguments")]
     args: Vec<String>,
     #[arg(index = 1, help = "The server name")]
