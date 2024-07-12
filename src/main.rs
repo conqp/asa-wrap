@@ -1,10 +1,10 @@
 use asa_wrap::{
-    GameUserSettings, IniFile, ScriptEngineGameSession, ServerSettings, SERVER_ADMIN_PASSWORD,
+    GameUserSettings, ScriptEngineGameSession, ServerSettings, SERVER_ADMIN_PASSWORD,
     SERVER_PASSWORD,
 };
 use clap::Parser;
 use env_logger::init;
-use ini::ini;
+use ini::Ini;
 use log::{error, trace};
 use std::process::{exit, Command};
 
@@ -52,7 +52,9 @@ struct Args {
 
 impl Args {
     pub fn command(&self) -> Command {
-        let game_user_settings = ini!(&self.game_user_settings);
+        let game_user_settings = Ini::load_from_file(&self.game_user_settings)
+            .map_err(|error| error!("{error}"))
+            .unwrap_or_default();
         trace!("Settings: {game_user_settings:?}");
 
         #[cfg(target_os = "windows")]
@@ -89,7 +91,7 @@ impl Args {
         command
     }
 
-    fn attributes(&self, game_user_settings: &IniFile) -> String {
+    fn attributes(&self, game_user_settings: &Ini) -> String {
         let mut attributes = Vec::new();
         attributes.push(self.ark.clone());
         attributes.push(LISTEN_ARG.into());
