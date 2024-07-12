@@ -18,6 +18,7 @@ const DEFAULT_SERVER_PORT: u16 = 7777;
 const DEFAULT_QUERY_PORT: u16 = 27015;
 
 #[derive(Debug, Parser)]
+#[command(author, about, version)]
 struct Args {
     #[arg(short, long, help = "Path to the GameUserSettings.ini", default_value = GAME_USER_SETTINGS)]
     game_user_settings: String,
