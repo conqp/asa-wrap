@@ -5,7 +5,7 @@ use asa_wrap::{
 use clap::Parser;
 use env_logger::init;
 use ini::Ini;
-use log::{error, trace};
+use log::error;
 use std::process::{exit, Command};
 
 const GAME_USER_SETTINGS: &str = "ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini";
@@ -55,7 +55,6 @@ impl Args {
         let game_user_settings = Ini::load_from_file(&self.game_user_settings)
             .map_err(|error| error!("{error}"))
             .unwrap_or_default();
-        trace!("Settings: {game_user_settings:?}");
 
         #[cfg(target_os = "windows")]
         let mut command = Command::new(&self.server_exe);
