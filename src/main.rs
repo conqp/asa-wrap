@@ -1,12 +1,14 @@
-use asa_wrap::{
-    GameUserSettings, ScriptEngineGameSession, ServerSettings, SERVER_ADMIN_PASSWORD,
-    SERVER_PASSWORD,
-};
+use std::process::{exit, Command};
+
 use clap::Parser;
 use env_logger::init;
 use ini::Ini;
 use log::error;
-use std::process::{exit, Command};
+
+use asa_wrap::{
+    GameUserSettings, ScriptEngineGameSession, ServerSettings, SERVER_ADMIN_PASSWORD,
+    SERVER_PASSWORD,
+};
 
 const GAME_USER_SETTINGS: &str = "ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini";
 const XVFB_RUN: &str = "/usr/bin/xvfb-run";
@@ -54,7 +56,7 @@ struct Args {
 impl Args {
     pub fn command(&self) -> Command {
         let game_user_settings = Ini::load_from_file(&self.game_user_settings)
-            .map_err(|error| error!("{error}"))
+            .inspect_err(|error| error!("{error}"))
             .unwrap_or_default();
 
         #[cfg(target_os = "windows")]
@@ -125,15 +127,11 @@ fn main() {
         Args::parse()
             .command()
             .spawn()
-            .unwrap_or_else(|error| {
-                error!("{error}");
-                exit(3);
-            })
+            .inspect_err(|error| error!("{error}"))
+            .unwrap_or_else(|_| exit(3))
             .wait()
-            .unwrap_or_else(|error| {
-                error!("{error}");
-                exit(4);
-            })
+            .inspect_err(|error| error!("{error}"))
+            .unwrap_or_else(|_| exit(4))
             .code()
             .unwrap_or(255),
     )
